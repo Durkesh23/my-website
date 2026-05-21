@@ -1,0 +1,13 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c7e0ff"/>
+      <stop offset="100%" stop-color="#e8f0fb"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="100" fill="url(#avatarGrad)"/>
+  <!-- Head -->
+  <circle cx="100" cy="78" r="32" fill="#90b8e0"/>
+  <!-- Body -->
+  <ellipse cx="100" cy="170" rx="52" ry="36" fill="#90b8e0"/>
+</svg>

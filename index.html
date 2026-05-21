@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bio Data — Create Your Profile</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── INDEX-SPECIFIC ── */
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 100px 24px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-card {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.04);
+      padding: 48px 44px 44px;
+      opacity: 0;
+      transform: translateY(32px);
+      animation: card-in 0.7s 0.15s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+    }
+    @keyframes card-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .form-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(0,113,227,0.15);
+    }
+    .form-header h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .form-header p {
+      font-size: 15px;
+      color: var(--text-second);
+      font-weight: 400;
+    }
+
+    /* Error style */
+    .field-group.error-state input,
+    .field-group.error-state select,
+    .field-group.error-state textarea {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(255,59,48,0.10);
+    }
+    .field-group.error-state label { color: var(--error); }
+
+    /* Field animation delays */
+    .field-group:nth-child(1)  { animation-delay: 0.30s; }
+    .field-group:nth-child(2)  { animation-delay: 0.35s; }
+    .field-group:nth-child(3)  { animation-delay: 0.40s; }
+    .field-group:nth-child(4)  { animation-delay: 0.45s; }
+    .field-group:nth-child(5)  { animation-delay: 0.50s; }
+    .field-group:nth-child(6)  { animation-delay: 0.55s; }
+    .field-group:nth-child(7)  { animation-delay: 0.60s; }
+    .field-group:nth-child(8)  { animation-delay: 0.65s; }
+    .field-group:nth-child(9)  { animation-delay: 0.70s; }
+    .field-group:nth-child(10) { animation-delay: 0.75s; }
+    .field-group:nth-child(11) { animation-delay: 0.80s; }
+    .field-group:nth-child(12) { animation-delay: 0.85s; }
+
+    /* Progress indicator */
+    .progress-track {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: card-in 0.5s 0.1s ease forwards;
+    }
+    .progress-bar-bg {
+      height: 3px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.4s var(--transition);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-hint);
+      margin-bottom: 8px;
+    }
+
+    /* Character counter for textarea */
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-hint);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 640px) {
+      .form-card { padding: 36px 24px 32px; }
+      .form-header h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BG BLOBS -->
+  <div class="bg-decor">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <!-- Dot pattern -->
+    <div style="position:absolute;inset:0;background-image:url('images/pattern-dots.svg');background-size:60px 60px;opacity:0.5;"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <span class="navbar-logo">Bio<span>Data</span></span>
+    <div class="navbar-steps">
+      <span style="font-size:12px;color:var(--text-hint);">Step</span>
+      <div class="step-dot active" title="Fill Form"></div>
+      <div class="step-dot" title="View Profile"></div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="page-wrapper">
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-track" style="width:100%;max-width:600px;">
+      <div class="progress-label">
+        <span id="progress-text">Fill in your details</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+
+      <!-- HEADER -->
+      <div class="form-header">
+        <div class="form-header-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile Builder
+        </div>
+        <h1>Create Your<br>Bio Data</h1>
+        <p>Fill in the details below to generate your professional profile</p>
+      </div>
+
+      <!-- PHOTO UPLOAD -->
+      <div class="photo-upload-wrap" style="animation-delay:0.25s;">
+        <div class="photo-ring" id="photo-ring">
+          <img id="photo-preview" src="" alt="Preview" style="display:none;">
+          <svg id="photo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <input type="file" id="photo-input" accept="image/*">
+        <p class="photo-label">
+          <span onclick="document.getElementById('photo-input').click()">Upload photo</span>
+          — or skip
+        </p>
+      </div>
+
+      <!-- FORM -->
+      <form id="bio-form" action="result.html" method="GET">
+
+        <!-- PERSONAL -->
+        <div class="form-section-title" style="animation-delay:0.28s; opacity:0; animation: field-reveal 0.5s 0.28s var(--spring) forwards;">Personal</div>
+
+        <div class="field-group">
+          <input type="text" id="fullname" name="fullname" placeholder="Full Name" required autocomplete="name">
+          <label for="fullname">Full Name *</label>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <input type="date" id="dob" name="dob" placeholder="Date of Birth" required>
+            <label for="dob">Date of Birth *</label>
+          </div>
+          <div class="field-group">
+            <select id="gender" name="gender" required>
+              <option value="" disabled selected></option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer-not">Prefer not to say</option>
+            </select>
+            <label for="gender">Gender *</label>
+            <span class="select-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="form-section-title" style="opacity:0; animation: field-reveal 0.5s 0.50s var(--spring) forwards;">Contact</div>
+
+        <div class="field-group">
+          <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
+          <label for="email">Email Address *</label>
+        </div>
+
+        <div class="field-group">
+          <input type="tel" id="phone" name="phone" placeholder="Phone" autocomplete="tel">
+          <label for="phone">Phone Number</label>
+        </div>
+
+        <div class="field-group">
+          <input type="text" id="address" name="address" placeholder="Address">
+          <label for="address">Street Address</label>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <input type="text" id="city" name="city" placeholder="City" required>
+            <label for="city">City *</label>
+          </div>
+          <div class="field-group">
+            <input type="text" id="state" name="state" placeholder="State">
+            <label for="state">State / Province</label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <input type="text" id="country" name="country" placeholder="Country" required>
+          <label for="country">Country *</label>
+        </div>
+
+        <!-- PROFESSIONAL -->
+        <div class="form-section-title" style="opacity:0; animation: field-reveal 0.5s 0.72s var(--spring) forwards;">Professional</div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <input type="text" id="occupation" name="occupation" placeholder="Occupation" required>
+            <label for="occupation">Occupation / Title *</label>
+          </div>
+          <div class="field-group">
+            <input type="text" id="company" name="company" placeholder="Company">
+            <label for="company">Company / Org</label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <input type="text" id="education" name="education" placeholder="Education">
+          <label for="education">Highest Education</label>
+        </div>
+
+        <div class="field-group">
+          <input type="text" id="skills" name="skills" placeholder="Skills">
+          <label for="skills">Skills / Interests (comma-separated)</label>
+        </div>
+
+        <!-- BIO -->
+        <div class="form-section-title" style="opacity:0; animation: field-reveal 0.5s 0.88s var(--spring) forwards;">About</div>
+
+        <div class="field-group textarea-group">
+          <textarea id="bio" name="bio" placeholder="Write a short bio about yourself..." maxlength="300"></textarea>
+          <label for="bio">Short Bio</label>
+        </div>
+        <div class="char-count"><span id="bio-count">0</span> / 300</div>
+
+        <!-- SOCIAL -->
+        <div class="form-section-title" style="opacity:0; animation: field-reveal 0.5s 0.96s var(--spring) forwards;">Social Links <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text-hint);"> (optional)</span></div>
+
+        <div class="field-group">
+          <input type="text" id="linkedin" name="linkedin" placeholder="LinkedIn">
+          <label for="linkedin">LinkedIn URL</label>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <input type="text" id="github" name="github" placeholder="GitHub">
+            <label for="github">GitHub URL</label>
+          </div>
+          <div class="field-group">
+            <input type="text" id="website" name="website" placeholder="Website">
+            <label for="website">Personal Website</label>
+          </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="btn-primary" style="opacity:0; animation: field-reveal 0.5s 1.1s var(--spring) forwards;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          Generate My Profile
+        </button>
+
+      </form>
+    </div><!-- /form-card -->
+
+  </main><!-- /page-wrapper -->
+
+  <script src="assets/js/app.js"></script>
+  <script>
+  // 1. Handle the Photo Upload and Preview
+  const photoInput = document.getElementById('photo-input');
+  const photoPreview = document.getElementById('photo-preview');
+  const photoIcon = document.getElementById('photo-icon');
+  let photoBase64 = "";
+
+  photoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        photoBase64 = event.target.result;
+        // Show the preview and hide the placeholder icon
+        photoPreview.src = photoBase64;
+        photoPreview.style.display = 'block';
+        photoPreview.style.width = '100%';
+        photoPreview.style.height = '100%';
+        photoPreview.style.objectFit = 'cover';
+        photoPreview.style.borderRadius = '50%'; // Ensures it stays circular
+        photoIcon.style.display = 'none';
+      };
+      // Convert the image to a base64 string so we can save it in sessionStorage
+      reader.readAsDataURL(file); 
+    }
+  });
+
+  // 2. Handle Form Submission
+  document.getElementById('bio-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // Stop the default GET request
+
+    // Gather all the data. Note: we map 'fullname' to 'name' so it matches what result.html expects
+    const bioData = {
+      name: document.getElementById('fullname').value,
+      dob: document.getElementById('dob').value,
+      gender: document.getElementById('gender').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      address: document.getElementById('address').value,
+      city: document.getElementById('city').value,
+      state: document.getElementById('state').value,
+      country: document.getElementById('country').value,
+      occupation: document.getElementById('occupation').value,
+      company: document.getElementById('company').value,
+      education: document.getElementById('education').value,
+      skills: document.getElementById('skills').value,
+      bio: document.getElementById('bio').value,
+      linkedin: document.getElementById('linkedin').value,
+      github: document.getElementById('github').value,
+      website: document.getElementById('website').value
+    };
+
+    // Save text data to sessionStorage
+    sessionStorage.setItem('bioData', JSON.stringify(bioData));
+
+    // Save photo to sessionStorage if one was uploaded
+    if (photoBase64) {
+      sessionStorage.setItem('bioPhoto', photoBase64);
+    } else {
+      sessionStorage.removeItem('bioPhoto'); // Clear out old photos if left blank
+    }
+
+    // Move to the results page
+    window.location.href = 'result.html';
+  });
+</script>
+</body>
+</html>
